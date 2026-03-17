@@ -1,0 +1,49 @@
+name: Build Custom VS Code
+
+on:
+  # Triggers the build automatically whenever code is pushed or merged into main
+  push:
+    branches: [ "main" ] 
+  # Allows you to manually trigger the build from the GitHub Actions UI
+  workflow_dispatch: 
+
+jobs:
+  build-linux:
+    name: Build Linux x64
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # VS Code currently targets Node 20
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11' # Required by node-gyp for native modules
+
+      - name: Install Linux Build Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential g++ libx11-dev libxkbfile-dev libsecret-1-dev pkg-config
+
+      - name: Install Yarn Dependencies
+        # Using standard yarn install. VS Code relies heavily on yarn.
+        run: yarn
+
+      - name: Build and Minify VS Code
+        # NODE_OPTIONS prevents the runner from running out of memory during the intense compilation phase
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
+        run: yarn gulp vscode-linux-x64-min
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: custom-vscode-linux-x64
+          # VS Code's gulp tasks output the compiled app to the parent directory
+          path: ../VSCode-linux-x64/
