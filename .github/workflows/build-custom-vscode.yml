@@ -5,6 +5,9 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build-linux:
     name: Build Linux x64
@@ -43,6 +46,8 @@ jobs:
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
         run: |
+          cp ../VSCode-linux-x64/bin/code-oss ../VSCode-linux-x64/bin/code-tunnel-oss
+
           npx gulp vscode-linux-x64-prepare-deb
           npx gulp vscode-linux-x64-build-deb
 
@@ -52,3 +57,15 @@ jobs:
           name: vivaldi-vscode-linux-deb
           # This targets the exact folder where the Gulp task outputs the .deb file
           path: .build/linux/deb/amd64/deb/*.deb
+
+      - name: Publish to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          # Automatically generates a unique tag based on the GitHub Action run number
+          tag_name: custom-build-${{ github.run_number }}
+          name: Custom VS Code Build #${{ github.run_number }}
+          body: "Automated custom Debian build of VS Code."
+          # Points exactly to where the .deb file is staged
+          files: .build/linux/deb/amd64/deb/*.deb
+          draft: false
+          prerelease: false
