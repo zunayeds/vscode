@@ -3,9 +3,9 @@ name: Build Custom VS Code
 on:
   # Triggers the build automatically whenever code is pushed or merged into main
   push:
-    branches: [ "main" ] 
+    branches: [ "main" ]
   # Allows you to manually trigger the build from the GitHub Actions UI
-  workflow_dispatch: 
+  workflow_dispatch:
 
 jobs:
   build-linux:
@@ -19,7 +19,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # VS Code currently targets Node 20
+          node-version-file: .nvmrc # <-- This tells the action to read VS Code's required version
 
       - name: Setup Python
         uses: actions/setup-python@v5
