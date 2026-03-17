@@ -43,4 +43,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: custom-vscode-linux-x64
-          path: ../VSCode-linux-x64/
+          path: ${{ github.workspace }}/VSCode-linux-x64/
