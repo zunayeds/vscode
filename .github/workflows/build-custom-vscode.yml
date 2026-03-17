@@ -18,6 +18,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc # Pulls the correct Node version automatically
+          cache: 'npm'
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -41,11 +42,13 @@ jobs:
       - name: Build Debian Package (.deb)
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
-        run: npx gulp vscode-linux-x64-build-deb
+        run: |
+          npx gulp vscode-linux-x64-prepare-deb
+          npx gulp vscode-linux-x64-build-deb
 
       - name: Upload Debian Package
         uses: actions/upload-artifact@v4
         with:
-          name: custom-vscode-linux-deb
+          name: vivaldi-vscode-linux-deb
           # This targets the exact folder where the Gulp task outputs the .deb file
           path: .build/linux/deb/amd64/deb/*.deb
