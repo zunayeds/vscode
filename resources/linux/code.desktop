@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Vivaldi
 Comment=Best Browser
-GenericName=Text Editor
+GenericName=Best Browser
 Exec=@@EXEC@@ %F
 Icon=@@ICON@@
 Type=Application

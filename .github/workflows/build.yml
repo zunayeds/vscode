@@ -1,0 +1,57 @@
+name: Build Custom VSCode IDE
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Setup Node (v20)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Yarn
+        run: npm install -g yarn@1.22.22
+
+      - name: Install dependencies
+        run: yarn
+
+      - name: Install build dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            build-essential \
+            pkg-config \
+            libx11-dev \
+            libxkbfile-dev \
+            libsecret-1-dev \
+            libkrb5-dev
+
+      - name: Build VS Code (Linux)
+        run: yarn gulp vscode-linux-x64
+
+      - name: Rename output
+        run: mv .vscode-linux-x64 vivaldi-linux-x64
+
+      - name: Build .deb package
+        run: yarn gulp vscode-linux-deb-x64
+
+      - name: Upload build folder
+        uses: actions/upload-artifact@v4
+        with:
+          name: vivaldi-linux-x64
+          path: vivaldi-linux-x64/
+
+      - name: Upload .deb package
+        uses: actions/upload-artifact@v4
+        with:
+          name: vivaldi-deb
+          path: .build/linux/deb/*.deb
