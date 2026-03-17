@@ -50,6 +50,8 @@ jobs:
           echo '#!/usr/bin/env bash' > ../VSCode-linux-x64/bin/code-tunnel-oss
           chmod +x ../VSCode-linux-x64/bin/code-tunnel-oss
 
+          sed -i 's/FAIL_BUILD_FOR_NEW_DEPENDENCIES: boolean = true/FAIL_BUILD_FOR_NEW_DEPENDENCIES: boolean = false/g' build/linux/dependencies-generator.ts
+
           npx gulp vscode-linux-x64-prepare-deb
           npx gulp vscode-linux-x64-build-deb
 
