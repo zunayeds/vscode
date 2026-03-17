@@ -46,7 +46,9 @@ jobs:
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
         run: |
-          cp ../VSCode-linux-x64/bin/code-oss ../VSCode-linux-x64/bin/code-tunnel-oss
+          mkdir -p ../VSCode-linux-x64/bin
+          echo '#!/usr/bin/env bash' > ../VSCode-linux-x64/bin/code-tunnel-oss
+          chmod +x ../VSCode-linux-x64/bin/code-tunnel-oss
 
           npx gulp vscode-linux-x64-prepare-deb
           npx gulp vscode-linux-x64-build-deb
